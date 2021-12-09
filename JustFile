@@ -1,0 +1,4 @@
+set dotenv-load := true
+
+hello:
+  echo "Hello, world!"
