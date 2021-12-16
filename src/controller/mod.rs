@@ -24,7 +24,7 @@ pub async fn server_run() -> std::io::Result<()> {
     HttpServer::new(|| App::new().data(new_pool().clone())
         .service(exec)
         .service(hc))
-        .bind("127.0.0.1:8080")?
+        .bind("127.0.0.1:8081")?
         .run()
         .await
 }
