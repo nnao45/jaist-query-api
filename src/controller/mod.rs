@@ -14,10 +14,16 @@ async fn exec(pool: web::Data<DbPool>) -> impl Responder {
     web::Json(user_count)
 }
 
+#[get("/hc")]
+async fn hc() -> impl Responder {
+    format!("OK")
+}
+
 #[actix_web::main]
 pub async fn server_run() -> std::io::Result<()> {
     HttpServer::new(|| App::new().data(new_pool().clone())
-        .service(exec))
+        .service(exec)
+        .service(hc))
         .bind("127.0.0.1:8080")?
         .run()
         .await
