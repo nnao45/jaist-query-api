@@ -17,16 +17,26 @@ build:
 docker-login:
     docker login
 
-docker-build:
+docker-app-build:
 	docker rmi -f {{ DOCKER_REPO }}/{{ NAME }}:latest
 	docker build -t {{ DOCKER_REPO }}/{{ NAME }}:latest .
 	docker tag {{ DOCKER_REPO }}/{{ NAME }}:latest {{ DOCKER_REPO }}/{{ NAME }}:{{ GIT_HASH }}
 
-docker-push: docker-login
+docker-app-push: docker-login
 	docker push {{ DOCKER_REPO }}/{{ NAME }}:latest
 	docker push {{ DOCKER_REPO }}/{{ NAME }}:{{ GIT_HASH }}
 
-docker-release: docker-build docker-push
+docker-ddl-build:
+	docker rmi -f {{ DOCKER_REPO }}/ddl-docker:latest
+	docker build -t {{ DOCKER_REPO }}/ddl-docker:latest . -f=tools/ddl_docker/Dockerfile
+	docker tag {{ DOCKER_REPO }}/ddl-docker:latest {{ DOCKER_REPO }}/ddl-docker:{{ GIT_HASH }}
+
+docker-ddl-push: docker-login
+	docker push {{ DOCKER_REPO }}/ddl-docker:latest
+	docker push {{ DOCKER_REPO }}/ddl-docker:{{ GIT_HASH }}
+
+docker-app-release: docker-app-build docker-app-push
+docker-ddl-release: docker-ddl-build docker-ddl-push
 
 mysql-db-is-exist:
     #!/bin/bash
