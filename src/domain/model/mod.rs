@@ -8,6 +8,24 @@ pub struct User {
     pub created_at: NaiveDateTime,
 }
 
+#[derive(Queryable)]
+pub struct Post {
+    pub id: i64,
+    pub title: String,
+    pub body: String,
+    pub published: bool,
+    pub created_at: NaiveDateTime,
+}
+
+#[derive(Queryable)]
+pub struct FootStamp {
+    pub id: i64,
+    pub user_id: i64,
+    pub latitude: f64,
+    pub longitude: f64,
+    pub created_at: NaiveDateTime,
+}
+
 #[derive(Debug, Error)]
 pub enum QueryError {
     #[error("mysql query error: {error:?}")]

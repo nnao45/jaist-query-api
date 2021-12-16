@@ -1,20 +1,32 @@
 set dotenv-load := true
 NAME := `sed -n 2p ./Cargo.toml | cut -c 8- | xargs printf`
 VERSION := `sed -n 3p ./Cargo.toml | cut -c 11- | sed '1s/^/v/' | xargs printf`
+GIT_HASH := `git rev-parse HEAD`
 
 DOCKER_REPO := "nnao45"
 MYSQL_DOCKER := "jqapi-test-mysql"
 MYSQL_DOCKER_EXISTS_FLAG := `if [ ! -z ${CIRCLECI:-} ]; then echo 1; exit 0; fi; docker ps --format "{{ .Names }}" --filter "name=jqapi-test-mysql" | wc -l`
 MYSQL_VERSION := "8.0.27"
 
-hello:
-  echo "Hello, world!"
-
 run:
   cargo run
 
 build:
   cargo build --release
+
+docker-login:
+    docker login
+
+docker-build:
+	docker rmi -f {{ DOCKER_REPO }}/{{ NAME }}:latest
+	docker build -t {{ DOCKER_REPO }}/{{ NAME }}:latest .
+	docker tag {{ DOCKER_REPO }}/{{ NAME }}:latest {{ DOCKER_REPO }}/{{ NAME }}:{{ GIT_HASH }}
+
+docker-push: docker-login
+	docker push {{ DOCKER_REPO }}/{{ NAME }}:latest
+	docker push {{ DOCKER_REPO }}/{{ NAME }}:{{ GIT_HASH }}
+
+docker-release: docker-build docker-push
 
 mysql-db-is-exist:
     #!/bin/bash
