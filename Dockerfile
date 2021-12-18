@@ -47,5 +47,10 @@ RUN cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime && \
 ## Copy App
 COPY --from=builder /output/main .
 
+## add user
+RUN groupadd --non-unique --gid 23456 jaist
+RUN useradd --non-unique --system --uid 12345 --gid 23456 naoya_yokoyama
+USER naoya_yokoyama
+
 ## Run
 CMD ["./main"]
