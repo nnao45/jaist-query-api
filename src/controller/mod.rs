@@ -19,10 +19,16 @@ async fn hc() -> impl Responder {
     format!("OK")
 }
 
+#[get("/")]
+async fn base() -> impl Responder {
+    format!("OK")
+}
+
 #[actix_web::main]
 pub async fn server_run() -> std::io::Result<()> {
     HttpServer::new(|| App::new().data(new_pool().clone())
-        // .service(exec)
+        .service(exec)
+        .service(base)
         .service(hc))
         .bind("127.0.0.1:8081")?
         .run()
